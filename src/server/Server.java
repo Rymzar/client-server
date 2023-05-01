@@ -1,7 +1,6 @@
 package server;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -11,10 +10,14 @@ public class Server {
         int client = 0;
         while (true) {
             Socket clientSocket = serverSocket.accept();
-            System.out.println("Client accepted " + (client++));
-            OutputStreamWriter writer = new OutputStreamWriter(clientSocket.getOutputStream());
-            writer.write("HTTP/1.0 200 OK\r\n" + "Content-type: text/html\r\n" + "\r\n" + "<h1>Hello</h1>\r\n");
+            System.out.println("Client accepted " + (++client));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            String request = reader.readLine();
+            String response = client +  ", your message length is " + request.length() + "\n";
+            writer.write(response);
             writer.flush();
+            reader.close();
             writer.close();
 
 
